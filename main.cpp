@@ -46,10 +46,48 @@ int get_score(char lho, char rho, int match, int mismatch) {
     return (int)intersection.size() > 0 ? match : mismatch;
 }
 
+/*
+ * Generates a score grid for finding the most optimized resulting sequence
+ */
+std::vector<std::vector<int>> generate_grid(const std::string &left_sequence,
+                                            const std::string &right_sequence,
+                                            int match=1, int mismatch=0, int gap=-1) {
+    std::vector<std::vector<int>> grid;
+
+    // prior assignment of the grid
+    std::vector<int> first_row;
+    first_row.reserve(left_sequence.length());
+
+    for (int i = 0; i < left_sequence.length(); ++i) {
+        first_row.push_back(i * gap);
+    }
+    grid.push_back(first_row);
+
+    for (int j = 1; j < right_sequence.length(); ++j) {
+        std::vector<int> row = {j * gap};
+        grid.push_back(row);
+    }
+
+    for (int i = 1; i < left_sequence.length(); ++i) {
+        for (int j = 1; j < right_sequence.length(); ++j) {
+            int cell_match = grid[i - 1][j - 1] + get_score(left_sequence[i], right_sequence[j], match, mismatch);
+            int deletion = grid[i - 1][j] + gap;
+            int insertion = grid[i][j - 1] + gap;
+            grid[i].push_back(std::max({cell_match, deletion, insertion}));
+        }
+    }
+
+    return grid;
+}
+
 int main() {
-    std::cout << get_score('A', 'C', 1, 0) << std::endl;
-    std::cout << get_score('A', 'N', 1, 0) << std::endl;
-    std::cout << get_score('A', 'D', 1, 0) << std::endl;
-    std::cout << get_score('A', 'Y', 1, 0) << std::endl;
+    auto grid = generate_grid("AA-CT", "AAACC");
+    for (auto & i : grid) {
+        for (int & j : i){
+            std::cout << j << ' ';
+        }
+        std::cout << std::endl;
+    }
+//    std::cout << get_score('A', 'C', 1, 0) << std::endl;
     return 0;
 }
