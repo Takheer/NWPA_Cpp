@@ -82,11 +82,11 @@ std::vector<std::vector<int>> generate_grid(const std::string &left_sequence,
     return grid;
 }
 
-std::tuple<std::string, std::string> align(const std::string &seq1,
-                                           const std::string &seq2,
+std::tuple<std::string, std::string> align(const std::string &input_seq_a,
+                                           const std::string &input_seq_b,
                                            int match = 1, int mismatch = 0, int gap = -1) {
-    std::string seq_a = "-" + seq1;
-    std::string seq_b = "-" + seq2;
+    std::string seq_a = "-" + input_seq_a;
+    std::string seq_b = "-" + input_seq_b;
 
     auto grid = generate_grid(seq_a, seq_b, match, mismatch, gap);
 
